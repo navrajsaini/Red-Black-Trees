@@ -12,27 +12,26 @@ struct node
 };
 class R_B_tree
 {
+public :
    node *root;
    node *q;
-public :
-   R_B_tree()
+
+   R_B_tree ()
    {
       q = NULL;
       root = NULL;
    }
    void Insert ();
-   void Insertfix (node*);
    void LRotate (node*);
    void RRotate (node*);
    void Delete ();
-   node* successor (node*);
    void Deletefix (node*);
-   void disp ();
+   void Insertfix (node*);
    void print (node*);
 };
 void R_B_tree::Insert()
 {
-   int z, i = 0;
+   int z, i;
    cout << endl << "Enter the key to be inserted: ";
    cin >> z;
    node *p, *q;
@@ -145,63 +144,57 @@ void R_B_tree::Delete()
    p = root;
    node *y = NULL;
    node *q = NULL;
-   int found = 0;
-   while(p != NULL&& found == 0)
+   bool exists = 0;
+   while(p != NULL && exists == 0)
    {
-      if(p->key==x)
-	 found = 1;
-      if(found==0)
+      if(p -> key == x)
+	 exists = 1;
+      if(exists == 0)
       {
-	 if(p->key<x)
-	    p = p->right;
+	 if(p -> key < x)
+	    p = p -> right;
 	 else
-	    p = p->left;
+	    p = p -> left;
       }
    }
-   if(found==0)
+   if(exists == 0)
    {
-      cout<<"\nElement Not Found.";
-      return ;
+      return;
    }
    else
    {
-      cout<<"\nDeleteeted Element: "<<p->key;
-      cout<<"\nColour: ";
-      if(p->colour=='b')
-	 cout<<"Black\n";
-      else
-	 cout<<"Red\n";
-
-      if(p->parent!=NULL)
-	 cout<<"\nParent: "<<p->parent->key;
-      else
-	 cout<<"\nThere is no parent of the node.  ";
-      if(p->right != NULL)
-	 cout<<"\nRight Child: "<<p->right->key;
-      else
-	 cout<<"\nThere is no right child of the node.  ";
-      if(p->left != NULL)
-	 cout<<"\nLeft Child: "<<p->left->key;
-      else
-	 cout<<"\nThere is no left child of the node.  ";
-      cout<<"\nNode Deleteeted.";
-      if(p->left == NULL||p->right == NULL)
-	 y=p;
-      else
-	 y=successor(p);
-      if(y->left!=NULL)
-	 q=y->left;
+      cout << "deleting " << p->key;
+      
+      if(p->left == NULL or p->right == NULL)
+	 y = p;
       else
       {
-	 if(y->right!=NULL)
-	    q=y->right;
+	 if (p -> left != NULL)
+	 {
+	    y = p -> left;
+	    while (y -> right != NULL)
+	       y = y -> right;
+	 }
 	 else
-	    q=NULL;
+	 {
+	    y = p -> right;
+	    while (y -> left != NULL)
+	       y = y -> left;
+	 }
       }
-      if(q!=NULL)
-	 q->parent=y->parent;
-      if(y->parent==NULL)
-	 root=q;
+      if(y -> left != NULL)
+	 q = y -> left;
+      else
+      {
+	 if (y -> right != NULL)
+	    q = y -> right;
+	 else
+	    q = NULL;
+      }
+      if(q != NULL)
+	 q -> parent = y -> parent;
+      if (y -> parent == NULL)
+	 root = q;
       else
       {
 	 if(y==y->parent->left)
@@ -226,191 +219,165 @@ void R_B_tree::Deletefix(node *p)
    {
       if(p->parent->left==p)
       {
-	 s=p->parent->right;
-	 if(s->colour=='r')
+	 s = p -> parent -> right;
+	 if(s -> colour == 'r')
 	 {
-	    s->colour='b';
-	    p->parent->colour='r';
-	    LRotate(p->parent);
-	    s=p->parent->right;
+	    s -> colour = 'b';
+	    p -> parent -> colour = 'r';
+	    LRotate(p -> parent);
+	    s = p -> parent -> right;
 	 }
-	 if(s->right->colour=='b'&&s->left->colour=='b')
+	 if (s -> right -> colour == 'b' && s -> left -> colour == 'b')
 	 {
-	    s->colour='r';
-	    p=p->parent;
+	    s -> colour = 'r';
+	    p=p -> parent;
 	 }
 	 else
 	 {
-	    if(s->right->colour=='b')
+	    if(s -> right -> colour == 'b')
 	    {
-	       s->left->colour=='b';
-	       s->colour='r';
-	       RRotate(s);
-	       s=p->parent->right;
+	       s -> left -> colour == 'b';
+	       s -> colour = 'r';
+	       RRotate (s);
+	       s = p -> parent -> right;
 	    }
-	    s->colour=p->parent->colour;
-	    p->parent->colour='b';
-	    s->right->colour='b';
-	    LRotate(p->parent);
-	    p=root;
+	    s -> colour = p -> parent -> colour;
+	    p -> parent -> colour = 'b';
+	    s -> right -> colour = 'b';
+	    LRotate (p -> parent);
+	    p = root;
 	 }
       }
       else
       {
-	 s=p->parent->left;
-	 if(s->colour=='r')
+	 s = p -> parent -> left;
+	 if(s -> colour == 'r')
 	 {
-	    s->colour='b';
-	    p->parent->colour='r';
-	    RRotate(p->parent);
-	    s=p->parent->left;
+	    s -> colour = 'b';
+	    p -> parent -> colour = 'r';
+	    RRotate (p -> parent);
+	    s = p -> parent -> left;
 	 }
-	 if(s->left->colour=='b'&&s->right->colour=='b')
+	 if(s -> left -> colour == 'b' && s -> right -> colour == 'b')
 	 {
-	    s->colour='r';
-	    p=p->parent;
+	    s -> colour = 'r';
+	    p = p -> parent;
 	 }
 	 else
 	 {
-	    if(s->left->colour=='b')
+	    if (s -> left -> colour == 'b')
 	    {
-	       s->right->colour='b';
-	       s->colour='r';
-	       LRotate(s);
-	       s=p->parent->left;
+	       s -> right -> colour = 'b';
+	       s -> colour = 'r';
+	       LRotate (s);
+	       s = p -> parent -> left;
 	    }
-	    s->colour=p->parent->colour;
-	    p->parent->colour='b';
-	    s->left->colour='b';
-	    RRotate(p->parent);
-	    p=root;
+	    s -> colour = p -> parent -> colour;
+	    p -> parent -> colour = 'b';
+	    s -> left -> colour = 'b';
+	    RRotate (p -> parent);
+	    p = root;
 	 }
       }
-      p->colour='b';
-      root->colour='b';
+      p -> colour = 'b';
+      root -> colour = 'b';
    }
 }
 
-void R_B_tree::LRotate(node *p)
+void R_B_tree::LRotate(node *s)
 {
-   if(p->right==NULL)
-      return ;
+   if (s -> right == NULL)
+      return;
    else
    {
-      node *y=p->right;
-      if(y->left!=NULL)
+      node *y = s -> right;
+      if (y -> left != NULL)
       {
-	 p->right=y->left;
-	 y->left->parent=p;
+	 s -> right = y -> left;
+	 y -> left -> parent = s;
       }
       else
-	 p->right=NULL;
-      if(p->parent!=NULL)
-	 y->parent=p->parent;
-      if(p->parent==NULL)
-	 root=y;
+	 s -> right = NULL;
+      if (s -> parent != NULL)
+	 y -> parent = s -> parent;
+      if (s -> parent == NULL)
+	 root = y;
       else
       {
-	 if(p==p->parent->left)
-	    p->parent->left=y;
+	 if(s == s -> parent -> left)
+	    s -> parent -> left = y;
 	 else
-	    p->parent->right=y;
+	    s -> parent -> right = y;
       }
-      y->left=p;
-      p->parent=y;
+      y -> left = s;
+      s -> parent = y;
    }
 }
-void R_B_tree::RRotate(node *p)
+void R_B_tree::RRotate(node *x)
 {
-   if(p->left==NULL)
-      return ;
+   if(x -> left == NULL)
+      return;
    else
    {
-      node *y=p->left;
-      if(y->right!=NULL)
+      node *y = x -> left;
+      if(y -> right != NULL)
       {
-	 p->left=y->right;
-	 y->right->parent=p;
+	 x -> left = y -> right;
+	 y -> right -> parent = x;
       }
       else
-	 p->left=NULL;
-      if(p->parent!=NULL)
-	 y->parent=p->parent;
-      if(p->parent==NULL)
-	 root=y;
+	 x -> left = NULL;
+      if(x -> parent != NULL)
+	 y -> parent = x -> parent;
+      if(x -> parent == NULL)
+	 root = y;
       else
       {
-	 if(p==p->parent->left)
-	    p->parent->left=y;
+	 if(x == x -> parent -> left)
+	    x -> parent -> left = y;
 	 else
-	    p->parent->right=y;
+	    x -> parent -> right = y;
       }
-      y->right=p;
-      p->parent=y;
+      y -> right = x;
+      x -> parent = y;
    }
 }
 
-node* R_B_tree::successor(node *p)
+void R_B_tree::print(node* p)
 {
-   node *y=NULL;
-   if(p->left!=NULL)
-   {
-      y=p->left;
-      while(y->right!=NULL)
-	 y=y->right;
-   }
-   else
-   {
-      y=p->right;
-      while(y->left!=NULL)
-	 y=y->left;
-   }
-   return y;
-}
-
-void R_B_tree::disp()
-{
-   print(root);
-}
-void R_B_tree::print(node *p)
-{
-   if(root==NULL)
+   if(root == NULL)
    {
       cout << endl << "No nodes in this tree.";
       return;
    }
-   if(p!=NULL)
+   if(p != NULL)
    {
-      cout << endl << " NODE: ";
-      cout << endl << "Key: " << p->key;
-      cout<<"\n Colour: ";
-      if(p->colour=='b')
-	 cout<<"Black";
+      cout << "Key: " << p -> key << endl;
+      if(p -> colour == 'b')
+	 cout << "Black" << endl;
       else
-	 cout<<"Red";
-      if(p->parent!=NULL)
-	 cout<<"\n Parent: "<<p->parent->key;
-      else
-	 cout<<"\n There is no parent of the node.  ";
-      if(p->right!=NULL)
-	 cout<<"\n Right Child: "<<p->right->key;
-      else
-	 cout<<"\n There is no right child of the node.  ";
-      if(p->left!=NULL)
-	 cout << endl << " Left Child: "<<p->left->key;
-      else
-	 cout << endl << "no left child of the node.";
+	 cout << "Red" << endl;
+      
+      if(p -> parent != NULL)
+	 cout << endl << "Parent: " << p -> parent -> key;
+            
+      if(p -> left != NULL)
+	 cout << endl << "Left: " << p -> left -> key;
+      
+      if(p -> right != NULL)
+	 cout << endl << "Right: " << p -> right -> key;
+
       cout << endl;
       if(p -> left)
       {
-	 cout << endl << "Left:" ;
+	 cout << endl << "Left: ";
 	 print (p -> left);
       }
 
       if(p -> right)
       {
-	 cout << endl << "Right:" << endl;
-	 print(p -> right);
+	 cout << endl << "Right: ";
+	 print (p -> right);
       }
 
    }
@@ -422,7 +389,7 @@ int main()
    R_B_tree RB;
    while (func != 'y')
    {
-      cout << "What function would you like to preform? (I/i for insert, D/d for delete, P/p for print and y to exit): ";
+      cout << endl << "What function would you like to preform? (I/i for insert, D/d for delete, P/p for print and y to exit): ";
       cin>> func;
       switch(func)
       {
@@ -436,11 +403,12 @@ int main()
 	    break;
 	 case 'P':
 	 case 'p':
-	    RB.disp();
+	    RB.print(RB.root);
 	    break;
 	 case 'y':
 	 case 'Y':
-	    return;
+	    cout << endl;
+	    return 0;
 	 default : cout << "That is not a valid choice...";
       }
    }
