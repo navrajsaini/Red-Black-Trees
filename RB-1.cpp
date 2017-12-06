@@ -7,9 +7,10 @@ https://www.cs.auckland.ac.nz/software/AlgAnim/red_black.html
 **************************************************************/
 
 #include <iostream>
-
+#include <sys/time.h>
 using namespace std;
 
+//node struct
 struct node
 {
    int key;
@@ -17,6 +18,8 @@ struct node
    char colour;
    
 };
+
+//RB tree class
 class R_B_tree
 {
 public :
@@ -38,23 +41,30 @@ public :
 };
 void R_B_tree::Insert()
 {
-   int z, i;
+   struct timeval timeStart,
+   timeEnd;
+   // benchmark for Insert:
+   gettimeofday(&timeStart, NULL);
+   
+   // get the key to be inserted
+   int z;
    cout << endl << "Enter the key to be inserted: ";
    cin >> z;
+   
    node *p, *q;
-   node *t = new node;
+   node *t = new node; // make a new node to store the key
    t -> key = z;
    t -> left = NULL;
    t -> right = NULL;
-   t -> colour = 'r';
+   t -> colour = 'r'; // make the colour red based on the rules of RB-trees
    p = root;
    q = NULL;
-   if (root == NULL)
+   if (root == NULL)// if there is no root then T the root
    {
       root = t;
       t -> parent = NULL;
    }
-   else
+   else// else find the location for t to be inserted and adjust accordingly
    {
       while (p != NULL)
       {
@@ -70,20 +80,34 @@ void R_B_tree::Insert()
       else
 	 q -> left = t;
    }
-   Insertfix(t);
+   gettimeofday(&timeEnd, NULL);
+   cout << endl << "The insert function took " << ((timeEnd.tv_sec - timeStart.tv_sec) * 1000000 + timeEnd.tv_usec - timeStart.tv_usec) << "ms to execute." << endl;
+   
+   Insertfix(t);//fix the tree based on the RB tree rules
 }
+
+//insert fix function
+// to fix the tree after insertion, based on the RB tree rules
 void R_B_tree::Insertfix(node *t)
 {
+   struct timeval timeStart,
+   timeEnd;
+   // benchmark for Insert:
+   gettimeofday(&timeStart, NULL);
+
+   
    node *u;
-   if(root == t)
+   if(root == t)// if the node is the root then change it's colour to black and return
    {
       t -> colour = 'b';
       return;
    }
-   while(t -> parent != NULL&& t -> parent -> colour=='r')
+   // while the parent exists and the colour of the parent is red
+   while(t -> parent != NULL && t -> parent -> colour == 'r')
    {
       node *g = t -> parent -> parent;
-      if(g -> left == t -> parent)
+      
+      if (g -> left == t -> parent)
       {
 	 if(g -> right != NULL)
 	 {
@@ -135,8 +159,10 @@ void R_B_tree::Insertfix(node *t)
       }
       root -> colour = 'b';
    }
+   gettimeofday(&timeEnd, NULL);
+   cout << endl << "The insertfix function took " << ((timeEnd.tv_sec - timeStart.tv_sec) * 1000000 + timeEnd.tv_usec - timeStart.tv_usec) << "ms to execute." << endl;
 }
-
+//delete function
 void R_B_tree::Delete()
 {
    if(root == NULL)
@@ -144,14 +170,19 @@ void R_B_tree::Delete()
       cout << endl << "Empty Tree." ;
       return;
    }
+   //ask which node to delete
    int x;
    cout << "What node would you like to delete? ";
    cin >> x;
+   
    node *p;
    p = root;
    node *y = NULL;
    node *q = NULL;
-   bool exists = 0;
+   bool exists = 0;// a bool variable to make sure there is something that can be deleted
+
+   // if the root exists find the node to be deleted and delete it
+   // which is done when exists = TRUE.
    while(p != NULL && exists == 0)
    {
       if(p -> key == x)
@@ -218,7 +249,8 @@ void R_B_tree::Delete()
 	 Deletefix(q);
    }
 }
-
+// delete fix function
+// fix the tree after deletion is complete based on the rules
 void R_B_tree::Deletefix(node *p)
 {
    node *s;
@@ -291,6 +323,7 @@ void R_B_tree::Deletefix(node *p)
    }
 }
 
+// left rotate
 void R_B_tree::LRotate(node *s)
 {
    if (s -> right == NULL)
@@ -320,6 +353,8 @@ void R_B_tree::LRotate(node *s)
       s -> parent = y;
    }
 }
+
+//Right Rotate
 void R_B_tree::RRotate(node *x)
 {
    if(x -> left == NULL)
@@ -350,6 +385,8 @@ void R_B_tree::RRotate(node *x)
    }
 }
 
+// Print function
+// Prints the Key, Parent, Left and Right keys
 void R_B_tree::print(node* p)
 {
    cout << endl;
