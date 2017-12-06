@@ -106,16 +106,11 @@ void R_B_tree::Insert()
 
   the fix steps are:
 
-  1. Do following if color of x’s parent is not BLACK or x is not root.
-  a) If x’s uncle is RED (Grand parent must have been black from property 4)
-    (i) Change color of parent and uncle to BLACK.
-    (ii) color of grandparent to RED.
-    (iii) Change x = x’s grandparent, repeat steps 2 and 3 for new x.
-  b) If x’s uncle is BLACK, then there can be four configurations for x, x’s parent (p) and x’s grandparent (g)
-    (i) Left Left Case (p is left child of g and x is left child of p)
-    (ii) Left Right Case (p is left child of g and x is right child of p)
-    (iii) Right Right Case (Mirror of case a)
-    (iv) Right Left Case (Mirror of case c)
+  1. t's uncle g is red:
+  since t.p.p is black we colour both t.p and y black to fix the property violation.
+
+  2 and 3: t's uncle is black and g is t's right or left child respectively:
+  for the right child we do a LRotation to transform it to case 3. 
 */
 void R_B_tree::Insertfix(node *t)
 {
@@ -136,7 +131,7 @@ void R_B_tree::Insertfix(node *t)
    {
       node *g = t -> parent -> parent;
       
-      if (g -> left == t -> parent)
+      if (g -> left == t -> parent)// case 1
       {
 	 if(g -> right != NULL)
 	 {
@@ -151,11 +146,12 @@ void R_B_tree::Insertfix(node *t)
 	 }
 	 else
 	 {
-	    if(t -> parent -> right == t)
+	    if(t -> parent -> right == t)// case 2
 	    {
 	       t = t -> parent;
 	       LRotate(t);
 	    }
+	    // case 3
 	    t -> parent -> colour = 'b';
 	    g -> colour = 'r';
 	    RRotate(g);
@@ -296,7 +292,7 @@ void R_B_tree::Delete()
 
    case 2, 3, and 4 occur when s is black.
 
-   2. p's sibling s is blakc and both of s's childern are black:
+   2. p's sibling s is black and both of s's childern are black:
    since s is also black along with it's childern, we take one black off both p and s,
    leaving p with only one black and s red. the while loop is repeated with p.parent to
    add an extra black to p.parent.
