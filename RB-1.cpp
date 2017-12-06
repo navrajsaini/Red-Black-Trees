@@ -211,8 +211,8 @@ void R_B_tree::Delete()
    
    node *p;
    p = root;
-   node *y = NULL;
-   node *q = NULL;
+   node *y;
+   node *q;
    bool exists = 0;// a bool variable to make sure there is something that can be deleted
 
    // if the root exists find the node to be deleted and delete it
