@@ -397,47 +397,53 @@ void R_B_tree::print(node *p)
       else
 	 cout<<"\n There is no right child of the node.  ";
       if(p->left!=NULL)
-	 cout<<"\n Left Child: "<<p->left->key;
+	 cout << endl << " Left Child: "<<p->left->key;
       else
-	 cout<<"\n There is no left child of the node.  ";
-      cout<<endl;
-      if(p->left)
+	 cout << endl << "no left child of the node.";
+      cout << endl;
+      if(p -> left)
       {
-	 cout<<"\n\nLeft:\n";
-	 print(p->left);
+	 cout << endl << "Left:" ;
+	 print (p -> left);
       }
-      /*else
-	cout<<"\nNo Left Child.\n";*/
-      if(p->right)
+
+      if(p -> right)
       {
-	 cout<<"\n\nRight:\n";
-	 print(p->right);
+	 cout << endl << "Right:" << endl;
+	 print(p -> right);
       }
-      /*else
-	cout<<"\nNo Right Child.\n"*/
+
    }
 }
 
 int main()
 {
-   char func;
+   char func = 'n';
    R_B_tree RB;
-   
-   cout << "What function would you like to preform? (I/i for insert, D/d for delete, P/p for print): ";
-   cin>> func;
-   switch(func)
+   while (func != 'y')
    {
-      case 'I' :
-      case 'i':
-	 RB.Insert();
-	 break;
-      case 'D' :
-      case 'd':
-	 RB.Delete();
-	 break;
-      case 'P':
-      case 'p':
-	 RB.disp();
-      default : cout << "That is not a valid choice...";
+      cout << "What function would you like to preform? (I/i for insert, D/d for delete, P/p for print and y to exit): ";
+      cin>> func;
+      switch(func)
+      {
+	 case 'I' :
+	 case 'i':
+	    RB.Insert();
+	    break;
+	 case 'D' :
+	 case 'd':
+	    RB.Delete();
+	    break;
+	 case 'P':
+	 case 'p':
+	    RB.disp();
+	    break;
+	 case 'y':
+	 case 'Y':
+	    return;
+	 default : cout << "That is not a valid choice...";
+      }
    }
 }
+   
+   
