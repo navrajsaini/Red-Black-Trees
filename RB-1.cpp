@@ -4,6 +4,8 @@ Red Black Tree implementation
 Resources:
 Introduction to Algorithms Third ed by Thomas H. Cormen et al.
 https://www.cs.auckland.ac.nz/software/AlgAnim/red_black.html
+
+benchmark was used from: https://bruun.co/2012/02/07/easy-cpp-benchmarking
 **************************************************************/
 
 #include <iostream>
@@ -39,17 +41,28 @@ public :
    void Insertfix (node*);
    void print (node*);
 };
+/*
+  insert requires a few cases
+  the inserted node replaces an existing leaf and then
+  has it's own leaves, instead of adding the new node as a leaf
+
+  The insertion is done the same way as BST then Insertfix is called to
+  fix and RB tree rule violations.
+ */
 void R_B_tree::Insert()
 {
+
+   // get the key to be inserted
+   int z;
+   cout << endl << "Enter the key to be inserted: ";
+   cin >> z;
+   
    struct timeval timeStart,
    timeEnd;
    // benchmark for Insert:
    gettimeofday(&timeStart, NULL);
    
-   // get the key to be inserted
-   int z;
-   cout << endl << "Enter the key to be inserted: ";
-   cin >> z;
+
    
    node *p, *q;
    node *t = new node; // make a new node to store the key
@@ -86,8 +99,24 @@ void R_B_tree::Insert()
    Insertfix(t);//fix the tree based on the RB tree rules
 }
 
-//insert fix function
-// to fix the tree after insertion, based on the RB tree rules
+/*insert fix function
+  to fix the tree after insertion, based on the RB tree rules
+
+  if x is a newly inserted node:
+
+  the fix steps are:
+
+  1. Do following if color of x’s parent is not BLACK or x is not root.
+  a) If x’s uncle is RED (Grand parent must have been black from property 4)
+    (i) Change color of parent and uncle to BLACK.
+    (ii) color of grandparent to RED.
+    (iii) Change x = x’s grandparent, repeat steps 2 and 3 for new x.
+  b) If x’s uncle is BLACK, then there can be four configurations for x, x’s parent (p) and x’s grandparent (g)
+    (i) Left Left Case (p is left child of g and x is left child of p)
+    (ii) Left Right Case (p is left child of g and x is right child of p)
+    (iii) Right Right Case (Mirror of case a)
+    (iv) Right Left Case (Mirror of case c)
+*/
 void R_B_tree::Insertfix(node *t)
 {
    struct timeval timeStart,
@@ -165,15 +194,20 @@ void R_B_tree::Insertfix(node *t)
 //delete function
 void R_B_tree::Delete()
 {
+   //ask which node to delete
+   int x;
+   cout << "What node would you like to delete? ";
+   cin >> x;
+   struct timeval timeStart,
+      timeEnd;
+   // benchmark for Insert:
+   gettimeofday(&timeStart, NULL);
    if(root == NULL)
    {
       cout << endl << "Empty Tree." ;
       return;
    }
-   //ask which node to delete
-   int x;
-   cout << "What node would you like to delete? ";
-   cin >> x;
+
    
    node *p;
    p = root;
@@ -248,17 +282,49 @@ void R_B_tree::Delete()
       if(y -> colour == 'b')
 	 Deletefix(q);
    }
+   gettimeofday(&timeEnd, NULL);
+   cout << endl << "The delete function took " << ((timeEnd.tv_sec - timeStart.tv_sec) * 1000000 + timeEnd.tv_usec - timeStart.tv_usec) << "ms to execute." << endl;
 }
-// delete fix function
-// fix the tree after deletion is complete based on the rules
+/* delete fix function
+   fix the tree after deletion is complete based on the rules
+
+   cases:
+   1. p's sibling s is red:
+   occurs when s is red. since s must have black childern, we switch
+   the colour of s and p.parent then a LRotation is preformed on p.parent.
+   This converts case 1 to one of the other 3 cases.
+
+   case 2, 3, and 4 occur when s is black.
+
+   2. p's sibling s is blakc and both of s's childern are black:
+   since s is also black along with it's childern, we take one black off both p and s,
+   leaving p with only one black and s red. the while loop is repeated with p.parent to
+   add an extra black to p.parent.
+
+   3. p's sibling s is black, s's left child is red and right child is black:
+   s's colour is swaped with it's left child then we perform a RRotation.
+   This transforms case 3 to 4, the new sibling s of p is not balck with a red right.
+
+   4. p's sibling s is balkc and s's right child is red:
+   We remove the extra balck on p by performing a left rotation on p.parent after recolouring is done.
+   
+   
+*/
 void R_B_tree::Deletefix(node *p)
 {
+   struct timeval timeStart,
+   timeEnd;
+   // benchmark for Insert:
+   gettimeofday(&timeStart, NULL);
+
+   
    node *s;
    while(p != root && p -> colour == 'b')
    {
       if(p -> parent -> left == p)
       {
 	 s = p -> parent -> right;
+	 //case 1.
 	 if(s -> colour == 'r')
 	 {
 	    s -> colour = 'b';
@@ -266,11 +332,13 @@ void R_B_tree::Deletefix(node *p)
 	    LRotate(p -> parent);
 	    s = p -> parent -> right;
 	 }
+	 // case 2
 	 if (s -> right -> colour == 'b' && s -> left -> colour == 'b')
 	 {
 	    s -> colour = 'r';
 	    p = p -> parent;
 	 }
+	 // case 3
 	 else
 	 {
 	    if(s -> right -> colour == 'b')
@@ -280,6 +348,7 @@ void R_B_tree::Deletefix(node *p)
 	       RRotate (s);
 	       s = p -> parent -> right;
 	    }
+	    // case 4
 	    s -> colour = p -> parent -> colour;
 	    p -> parent -> colour = 'b';
 	    s -> right -> colour = 'b';
@@ -321,11 +390,18 @@ void R_B_tree::Deletefix(node *p)
       p -> colour = 'b';
       root -> colour = 'b';
    }
+   gettimeofday(&timeEnd, NULL);
+   cout << endl << "The deletefix function took " << ((timeEnd.tv_sec - timeStart.tv_sec) * 1000000 + timeEnd.tv_usec - timeStart.tv_usec) << "ms to execute." << endl;
 }
 
 // left rotate
 void R_B_tree::LRotate(node *s)
 {
+   struct timeval timeStart,
+   timeEnd;
+   // benchmark:
+   gettimeofday(&timeStart, NULL);
+   
    if (s -> right == NULL)
       return;
    else
@@ -352,11 +428,20 @@ void R_B_tree::LRotate(node *s)
       y -> left = s;
       s -> parent = y;
    }
+   gettimeofday(&timeEnd, NULL);
+   cout << endl << "The left rotate function took " << ((timeEnd.tv_sec - timeStart.tv_sec) * 1000000 + timeEnd.tv_usec - timeStart.tv_usec)
+	<< "ms to execute." << endl;
 }
 
 //Right Rotate
 void R_B_tree::RRotate(node *x)
 {
+   
+   struct timeval timeStart,
+      timeEnd;
+   // benchmark for Insert:
+   gettimeofday(&timeStart, NULL);
+   
    if(x -> left == NULL)
       return;
    else
@@ -383,6 +468,9 @@ void R_B_tree::RRotate(node *x)
       y -> right = x;
       x -> parent = y;
    }
+   gettimeofday(&timeEnd, NULL);
+   cout << endl << "The Right Rotate function took " << ((timeEnd.tv_sec - timeStart.tv_sec) * 1000000 + timeEnd.tv_usec - timeStart.tv_usec)
+	<< "ms to execute." << endl;
 }
 
 // Print function
@@ -427,6 +515,7 @@ void R_B_tree::print(node* p)
       }
 
    }
+   
 }
 
 int main()
@@ -435,7 +524,7 @@ int main()
    R_B_tree RB;
    while (func != 'y')
    {
-      cout << endl << "What function would you like to preform? (I/i for insert, D/d for delete, P/p for print and y to exit): ";
+      cout << endl << "What function would you like to preform? \n(I/i for insert, D/d for delete, P/p for print and y to exit): ";
       cin>> func;
       switch(func)
       {
