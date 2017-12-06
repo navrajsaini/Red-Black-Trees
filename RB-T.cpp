@@ -203,3 +203,89 @@ void R_B_tree::t_min (node* x)
 		x = x -> left;
 	return x;
 }
+
+void R_B_tree::insert (node* z)
+{
+	node* y = NULL;
+	node* x = root;
+	
+	while (x != NULL)
+	{
+		y = x;
+		if (z -> key < x -> key)
+			x = x -> left;
+		else
+			x = x -> right;
+	}//end of while
+	z -> parent = y;
+	
+	if (y == NULL)
+	{
+		root = z;
+	}// end of if(y==NULL)
+	
+	elseif (z -> key < y -> key)
+	{
+		y -> left = z;
+	}// end of elseif
+	else
+		y -> right = z;
+	z -> right = NULL;
+	z -> left = NULL;
+	z -> colour = 'r';
+	Insertfix(z);
+}
+
+void R_B_tree::Insertfix (node* z)
+{
+	node* y;
+	while (z -> parent -> colour == 'r')
+	{
+		if (z -> parent == z -> parent -> parent -> left)
+		{
+			y = z -> parent -> parent -> right;
+			
+			if (y -> colour == 'r')
+			{
+				z -> parent -> colour = 'b';
+				y -> colour = 'b';
+				z -> parent -> parent -> colour = 'r';
+			}//end of if (y.colour == 'r')
+			
+			else
+			{
+				if (z == z -> parent -> right)
+				{
+					z = z -> parent;
+					LRotate(z);
+				}//end of if
+				z -> parent -> colour = 'b';
+				z -> parent -> parent -> colour = 'r';
+				RRotate(z -> parent -> parent);
+			}// end of else
+		}// end of first if
+		
+		else
+		{
+			if (y -> colour == 'r')
+			{
+				z -> parent -> colour = 'r';
+				y -> colour = 'r';
+				z -> parent -> parent -> colour = 'b';
+			}//end of if (y.colour == 'b')
+			
+			else
+			{
+				if (z == z -> parent -> right)
+				{
+					z = z -> parent;
+					LRotate(z);
+				}//end of if
+				z -> parent -> colour = 'r';
+				z -> parent -> parent -> colour = 'b';
+				RRotate(z -> parent -> parent);
+			}// end of else
+		}// end of first else
+	}//end of while loop
+	root -> colour = 'b';
+}
