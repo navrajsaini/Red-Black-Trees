@@ -1,14 +1,21 @@
-#include<iostream>
+/************************************************************
+BY: Navraj and Bhupender
+Red Black Tree implementation
+Resources:
+Introduction to Algorithms Third ed by Thomas H. Cormen et al.
+https://www.cs.auckland.ac.nz/software/AlgAnim/red_black.html
+**************************************************************/
+
+#include <iostream>
 
 using namespace std;
 
 struct node
 {
    int key;
-   node *parent;
+   node *parent, *left, *right;
    char colour;
-   node *left;
-   node *right;
+   
 };
 class R_B_tree
 {
@@ -57,85 +64,85 @@ void R_B_tree::Insert()
 	 else
 	    p = p -> left;
       }
-      t->parent = q;
-      if(q->key<t->key)
-	 q->right = t;
+      t -> parent = q;
+      if(q -> key < t -> key)
+	 q -> right = t;
       else
-	 q->left = t;
+	 q -> left = t;
    }
    Insertfix(t);
 }
 void R_B_tree::Insertfix(node *t)
 {
    node *u;
-   if(root==t)
+   if(root == t)
    {
-      t->colour = 'b';
+      t -> colour = 'b';
       return;
    }
    while(t -> parent != NULL&& t -> parent -> colour=='r')
    {
-      node *g = t->parent->parent;
-      if(g->left==t->parent)
+      node *g = t -> parent -> parent;
+      if(g -> left == t -> parent)
       {
 	 if(g -> right != NULL)
 	 {
-	    u=g->right;
-	    if(u->colour=='r')
+	    u = g -> right;
+	    if(u -> colour == 'r')
 	    {
-	       t->parent->colour = 'b';
-	       u->colour = 'b';
-	       g->colour = 'r';
+	       t -> parent -> colour = 'b';
+	       u -> colour = 'b';
+	       g -> colour = 'r';
 	       t = g;
 	    }
 	 }
 	 else
 	 {
-	    if(t->parent->right==t)
+	    if(t -> parent -> right == t)
 	    {
-	       t = t->parent;
+	       t = t -> parent;
 	       LRotate(t);
 	    }
-	    t->parent->colour = 'b';
-	    g->colour = 'r';
+	    t -> parent -> colour = 'b';
+	    g -> colour = 'r';
 	    RRotate(g);
 	 }
       }
       else
       {
-	 if(g->left != NULL)
+	 if(g -> left != NULL)
 	 {
-	    u = g->left;
-	    if(u->colour=='r')
+	    u = g -> left;
+	    if(u -> colour == 'r')
 	    {
-	       t->parent->colour = 'b';
-	       u->colour = 'b';
-	       g->colour = 'r';
+	       t -> parent -> colour = 'b';
+	       u -> colour = 'b';
+	       g -> colour = 'r';
 	       t = g;
 	    }
 	 }
 	 else
 	 {
-	    if(t->parent->left==t)
+	    if(t -> parent -> left == t)
 	    {
-	       t = t->parent;
+	       t = t -> parent;
 	       RRotate(t);
 	    }
-	    t->parent->colour = 'b';
-	    g->colour = 'r';
+	    t -> parent -> colour = 'b';
+	    g -> colour = 'r';
 	    LRotate(g);
 	 }
       }
-      root->colour = 'b';
+      root -> colour = 'b';
    }
 }
 
 void R_B_tree::Delete()
 {
-   if(root==NULL)
+   if(root == NULL)
    {
-      cout<<"\nEmpty Tree." ;
-      return ;
+      cout << endl << "Empty Tree." ;
+      return;
    }
    int x;
    cout << "What node would you like to delete? ";
@@ -197,17 +204,17 @@ void R_B_tree::Delete()
 	 root = q;
       else
       {
-	 if(y==y->parent->left)
-	    y->parent->left=q;
+	 if(y == y -> parent -> left)
+	    y -> parent -> left = q;
 	 else
-	    y->parent->right=q;
+	    y -> parent -> right = q;
       }
-      if(y!=p)
+      if(y != p)
       {
-	 p->colour=y->colour;
-	 p->key=y->key;
+	 p -> colour = y -> colour;
+	 p -> key = y -> key;
       }
-      if(y->colour=='b')
+      if(y -> colour == 'b')
 	 Deletefix(q);
    }
 }
@@ -215,9 +222,9 @@ void R_B_tree::Delete()
 void R_B_tree::Deletefix(node *p)
 {
    node *s;
-   while(p!=root&&p->colour=='b')
+   while(p != root && p -> colour == 'b')
    {
-      if(p->parent->left==p)
+      if(p -> parent -> left == p)
       {
 	 s = p -> parent -> right;
 	 if(s -> colour == 'r')
@@ -230,7 +237,7 @@ void R_B_tree::Deletefix(node *p)
 	 if (s -> right -> colour == 'b' && s -> left -> colour == 'b')
 	 {
 	    s -> colour = 'r';
-	    p=p -> parent;
+	    p = p -> parent;
 	 }
 	 else
 	 {
@@ -345,14 +352,16 @@ void R_B_tree::RRotate(node *x)
 
 void R_B_tree::print(node* p)
 {
+   cout << endl;
    if(root == NULL)
    {
       cout << endl << "No nodes in this tree.";
       return;
    }
+
    if(p != NULL)
    {
-      cout << "Key: " << p -> key << endl;
+      cout << endl << "Key: " << p -> key << endl;
       if(p -> colour == 'b')
 	 cout << "Black" << endl;
       else
