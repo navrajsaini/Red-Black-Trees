@@ -224,12 +224,19 @@ void R_B_tree::insert (node* z)
 		root = z;
 	}// end of if(y==NULL)
 	
-	elseif (z -> key < y -> key)
-	{
-		y -> left = z;
-	}// end of elseif
 	else
-		y -> right = z;
+	{
+		if (z -> key < y -> key)
+		{
+			y -> left = z;
+		}// end of elseif
+		else
+			y -> right = z;/*
+		z -> right = NULL;
+		z -> left = NULL;
+		z -> colour = 'r';
+		Insertfix(z);*/
+	}
 	z -> right = NULL;
 	z -> left = NULL;
 	z -> colour = 'r';
