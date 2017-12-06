@@ -15,7 +15,7 @@ CCCFLAGS = -Wall -g -std=gnu++11 -lpthread -lX11
 
 # all is called a target, after the colon you have dependencies
 # ie. "the target all is dependent on the executables
-all : RB-T
+all : RB-1
 
 # the target <excecutable1> is dependent on the list of dependencies
 # the line following  is the required executable (don't need to adjust it)
@@ -28,7 +28,7 @@ all : RB-T
 
 # if there is more than one problem to do on an assignment you can compile
 # all the questions at the same time
-RB-T : RB-T.o
+RB-1 : RB-1.o
 	$(CCC) $(CCCFLAGS) -o $@ $^
 
 # default rule compiling .cc to .o
@@ -50,4 +50,4 @@ clean:
 
 # Clean out your directory including executables with command "clean-all"
 clean-all: clean
-	rm -f RB-T
+	rm -f RB-1

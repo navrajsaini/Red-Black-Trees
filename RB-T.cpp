@@ -245,7 +245,8 @@ void R_B_tree::Insert ()
    int z, i=0;
    cout<< endl << "Which key would you like to insert? (must be an int): ";
    cin>>z;
-   node *p,*q;
+   node *p;
+   node *q;
    node *t=new node;
    
    t->key=z;
@@ -267,7 +268,6 @@ void R_B_tree::Insert ()
    
    else
    {
-      
       while(p!=NULL)
       {
 	 q=p;
@@ -277,10 +277,14 @@ void R_B_tree::Insert ()
 	    p=p->left;
       }
       t->parent=q;
-      if(q->key<t->key)
+      if(q->key < t->key)
+      {
 	 q->right=t;
+      }
       else
+      {
 	 q->left=t;
+      }
    }
    cout << "about to fix insert..." <<endl;
    Insertfix(t);
